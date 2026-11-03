@@ -35,8 +35,15 @@ for module in (library_routes,dynamic_routes,learning_routes,free_books):module.
 def configured():return bool(storage.BASE and storage.KEY)
 
 
+def missing_config():
+    return [name for name,value in [('SUPABASE_URL',storage.BASE),('SUPABASE_PUBLISHABLE_KEY',storage.KEY)] if not value]
+
+
 @asynccontextmanager
 async def lifespan(app):
+    # Read the running service environment at startup rather than retaining import-time values.
+    storage.BASE=os.getenv('SUPABASE_URL','').strip().rstrip('/')
+    storage.KEY=os.getenv('SUPABASE_PUBLISHABLE_KEY','').strip()
     prepare();tempfile.tempdir=str(WORK)
     key=os.getenv('SUPER_MIND_API_KEY','').strip()
     client=AsyncOpenAI(api_key=key,base_url=os.getenv('OPENAI_BASE_URL','https://space.ai-builders.com/backend/v1'),timeout=120,max_retries=0) if key else None
@@ -106,11 +113,11 @@ async def cloud_security(request,call_next):
 
 
 @app.get('/healthz')
-def health():return {'status':'ok','mode':'cloud','configured':configured()}
+def health():return {'status':'ok','mode':'cloud','configured':configured(),'missing_variables':missing_config()}
 
 
 @app.get('/auth/config')
-def auth_config():return {'cloud':True,'configured':configured()}
+def auth_config():return {'cloud':True,'configured':configured(),'missing_variables':missing_config()}
 
 
 class Credentials(BaseModel):

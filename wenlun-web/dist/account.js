@@ -16,7 +16,7 @@ function AccountGate({children}){
  if(phase==='ready')return h(React.Fragment,null,cloud&&h('div',{className:'account-strip'},h('span',null,email||'私人书房'),h('button',{disabled:busy,onClick:logout},'退出登录')),children);
  return h('main',{className:'auth-page'},h('div',{className:'auth-brand'},'文论伴读'),h('p',{className:'muted'},'自己的书架，自己的思考。'),
   phase==='loading'?h('p',{role:'status'},'正在连接私人书房…'):
-  phase==='unconfigured'?h('p',{className:'error'},'云端账户连接尚未配置，请联系维护者完成 Supabase 环境变量设置。'):
+  phase==='unconfigured'?h('p',{className:'error'},'云端账户连接尚未配置。请打开 /auth/config 查看当前运行实例缺少的变量名称（不会显示密钥）。'):
   phase==='error'?h(React.Fragment,null,h('p',{className:'error'},error),h('button',{onClick:initialize},'重新连接')):
   h(React.Fragment,null,h('h1',null,phase==='register'?'创建私人书房':phase==='forgot'?'找回密码':phase==='reset'?'设置新密码':'登录你的书房'),error&&h('p',{className:'error',role:'alert'},error),message&&h('p',{className:'auth-message',role:'status'},message),
    h('form',{onSubmit:submit},phase!=='reset'&&h('label',null,'邮箱',h('input',{type:'email',required:true,autoComplete:'email',value:email,maxLength:254,onChange:e=>E(e.target.value),placeholder:'你的邮箱地址'})),phase!=='forgot'&&h('label',null,'密码',h('input',{type:'password',required:true,minLength:8,maxLength:128,autoComplete:phase==='login'?'current-password':'new-password',value:password,onChange:e=>W(e.target.value),placeholder:'至少8位，请使用独立密码'})),h('button',{type:'submit',className:'primary',disabled:busy},busy?'请稍候…':phase==='register'?'注册':phase==='forgot'?'发送重置邮件':phase==='reset'?'保存新密码':'登录')),
