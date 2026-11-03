@@ -58,6 +58,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title='Chat API', lifespan=lifespan)
 
+@app.get('/auth/config')
+def local_auth_config():
+    return {'cloud':False,'configured':True}
+
 
 @app.middleware('http')
 async def private_reader(request: Request, call_next):

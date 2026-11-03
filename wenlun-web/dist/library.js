@@ -2,6 +2,7 @@
 const h=React.createElement;
 async function api(path,options={}){
  const r=await fetch(path,options);let d;try{d=await r.json()}catch{throw Error('服务器没有返回可用数据')}
+ if(r.status===401)window.dispatchEvent(new Event('reader-auth-expired'));
  if(!r.ok)throw Error(typeof d.detail==='string'?d.detail:'请求失败，请重试');return d;
 }
 function Library({onReaderChange=()=>{},initialBook=null}){
@@ -41,6 +42,6 @@ function Library({onReaderChange=()=>{},initialBook=null}){
     h('div',{className:'toolbar'},h('input',{value:q,onChange:e=>Q(e.target.value),placeholder:'搜索书名','aria-label':'搜索书名'})),
     h('div',{className:'books'},...books.filter(b=>b.title.toLowerCase().includes(q.toLowerCase())).map(b=>h('div',{key:b.id,className:'shelf-item'},h('button',{className:'book',onClick:()=>open(b),disabled:busy},h(BookCover,{book:b,version:coverVersion}),h('p',{className:'book-title'},b.title),h('p',{className:'muted'},status[b.status])),h('label',{className:'change-cover'},'设置封面',h('input',{type:'file',hidden:true,accept:'image/jpeg,image/png,image/webp',onChange:e=>{const file=e.target.files[0];if(!file)return;run(async()=>{if(file.size>5*1024*1024)throw Error('封面图片请小于5MB');await api(`/api/books/${b.id}/cover`,{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:file});CV(v=>v+1);M('封面已保存在本机')});e.target.value=''}}))))),
     h(FreeBooks,{onImported:async b=>{await refresh();M('已加入书架：'+b.title)}}),
-    !books.length&&h('p',{className:'muted'},'暂无书籍。点击右上角「导入」开始。'),h('div',{className:'actions'},button('导入旧网页阅读记录',importBackup)),h('footer',null,'上传支持 TXT 和 PDF，单个文件上限 80MB。扫描件可改用本机 OCR；分栏、公式及脚注的顺序请核对原文。')):
+    !books.length&&h('p',{className:'muted'},'暂无书籍。点击右上角「导入」开始。'),!window.READER_CLOUD&&h('div',{className:'actions'},button('导入旧网页阅读记录',importBackup)),h('footer',null,window.READER_CLOUD?'云端支持 TXT 和文字型 PDF，单份上限50MB。扫描件请先在本地完成 OCR。':'上传支持 TXT 和 PDF，单个文件上限 80MB。扫描件可改用本机 OCR；分栏、公式及脚注的顺序请核对原文。')):
    h(DynamicReader,{key:book.id+':'+page.page,book,page,notes,saved,onNotes:N,onSaved:A,onNavigate:navigate,onGuide:()=>{F(book);K(null)}})));
 }

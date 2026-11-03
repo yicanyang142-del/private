@@ -5,6 +5,7 @@ function UploadArea({onImport,onOCR,disabled=false,compact=false}){
  const busy=phase==='parsing'||phase==='saving';
  async function choose(file){
   if(!file||active.current||disabled)return;active.current=true;
+  if(window.READER_CLOUD&&file.size>50*1024*1024){active.current=false;setError('云端每份文件上限50MB，请拆分后导入');return}
   const abort=new AbortController();controller.current=abort;setError('');setOCRFile(null);setPhase('parsing');
   try{const {parseLocalFile}=await import('./file-parser.mjs');
    const parsed=await parseLocalFile(file,{signal:abort.signal,onProgress:p=>setMessage(p.message)});
@@ -24,6 +25,7 @@ function UploadArea({onImport,onOCR,disabled=false,compact=false}){
   h('button',{className:compact?'import-small':'primary',disabled:disabled||busy,onClick:()=>input.current.click()},busy?'正在导入…':compact?'＋ 导入':'选择文献'),
   busy&&h('button',{className:'upload-cancel',disabled:phase==='saving',onClick:()=>controller.current?.abort()},'取消'),
   message&&h('p',{className:'muted',role:'status','aria-live':'polite'},message),error&&h('p',{className:'error',role:'alert'},error),
-  ocrFile&&h('button',{disabled:busy,onClick:ocr},'改用本机 OCR 转文字'),
+  ocrFile&&!window.READER_CLOUD&&h('button',{disabled:busy,onClick:ocr},'改用本机 OCR 转文字'),
+  ocrFile&&window.READER_CLOUD&&h('p',{className:'muted'},'此版本可能是扫描件，请先在本地完成 OCR 后上传文本。'),
   !compact&&h('small',null,'文字先在浏览器提取，再保存在本机。扫描件需要 OCR；单份不超过 80MB。'));
 }
