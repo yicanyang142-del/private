@@ -1,0 +1,92 @@
+[
+  {
+    "id": "wind-huang",
+    "name": "黄侃",
+    "era": "近代",
+    "work": "《文心雕龙札记》",
+    "summary": "从文意与文辞两个方面理解风、骨。",
+    "status": "据童庆炳转述；未据原书核页",
+    "source": "wind"
+  },
+  {
+    "id": "wind-liu",
+    "name": "刘永济及相关论者",
+    "era": "现代",
+    "work": "《文心雕龙校释》等",
+    "summary": "侧重情志与事义，尤其重视文章的内容支撑。",
+    "status": "据童庆炳对学术史的梳理",
+    "source": "wind"
+  },
+  {
+    "id": "wind-wang",
+    "name": "王运熙",
+    "era": "现代",
+    "work": "《从〈文心雕龙·风骨〉谈到建安风骨》",
+    "summary": "强调明朗刚健的艺术风格。",
+    "status": "据童庆炳转述；非直接引文",
+    "source": "wind"
+  },
+  {
+    "id": "wind-tong",
+    "name": "童庆炳",
+    "era": "当代研究",
+    "work": "《文心雕龙》“风清骨峻”说",
+    "summary": "反对只用单一风格概括风骨，回到篇内证据讨论。",
+    "status": "据作者本人文章概述",
+    "source": "wind"
+  },
+  {
+    "id": "change-ji",
+    "name": "纪昀",
+    "era": "清代",
+    "work": "《文心雕龙》评注",
+    "summary": "将通变的指向理解为复古。",
+    "status": "据吴中胜、钟诗雅综述",
+    "source": "change"
+  },
+  {
+    "id": "change-liu",
+    "name": "刘永济",
+    "era": "现代",
+    "work": "《文心雕龙校释》",
+    "summary": "重视常与变的关系，不能只看作回到旧制。",
+    "status": "据吴中胜、钟诗雅综述",
+    "source": "change"
+  },
+  {
+    "id": "change-tong",
+    "name": "童庆炳",
+    "era": "当代研究",
+    "work": "“会通适变”说新解",
+    "summary": "以会通古典、适应当下创作变革理解二者。",
+    "status": "据吴中胜、钟诗雅综述",
+    "source": "change"
+  },
+  {
+    "id": "emotion-huang",
+    "name": "黄侃",
+    "era": "近代",
+    "work": "《文心雕龙札记》",
+    "summary": "强调此篇纠正文采过盛、情实不足的针对性。",
+    "status": "据童庆炳转述；非直接引文",
+    "source": "emotion"
+  },
+  {
+    "id": "emotion-wang",
+    "name": "王元化",
+    "era": "现代研究",
+    "work": "《文心雕龙讲疏》",
+    "summary": "从情与志的结合来理解相关命题。",
+    "status": "据童庆炳转述；未据原书核页",
+    "source": "emotion"
+  },
+  {
+    "id": "emotion-tong",
+    "name": "童庆炳",
+    "era": "当代研究",
+    "work": "《文心雕龙》“情经辞纬”说",
+    "summary": "把情感转化为作品看作动态过程。",
+    "status": "据作者本人文章概述",
+    "source": "emotion"
+  }
+]

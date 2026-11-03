@@ -1,0 +1,24 @@
+[server]
+host = "127.0.0.1"
+port = 8765
+
+[paths]
+data_dir = "data"
+database = "data/app.db"
+uploads = "data/uploads"
+work = "data/work"
+runtime = "data/server.json"
+stop_request = "data/stop.request"
+acceptance_report = "data/acceptance-report.json"
+
+[library]
+page_size = 900
+max_upload_mb = 80
+
+[academic_search]
+timeout_seconds = 20
+candidate_count = 10
+source_count = 3
+snippet_characters = 1600
+# Domains are a provenance filter, not a guarantee of peer review or correctness.
+domains = ["plato.stanford.edu", "iep.utm.edu", "jstor.org", "cambridge.org", "academic.oup.com", "tandfonline.com", "link.springer.com", "sciencedirect.com", "cnki.net", "wanfangdata.com.cn", "cqvip.com", "cssn.cn", "pku.edu.cn", "fudan.edu.cn", "bnu.edu.cn", "ruc.edu.cn", "nju.edu.cn", "zju.edu.cn"]
