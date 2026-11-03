@@ -17,6 +17,8 @@ python -m uvicorn main:app --app-dir app --host 0.0.0.0 --port $PORT --workers 1
 
 使用 Python 3.12 系列；配置读取使用 Python 3.11+ 内置 tomllib，建议保持与本机 3.12 一致。不要使用 Windows start.ps1 作为云端启动命令。前端是本地静态资源，由 FastAPI 提供，无需 npm 构建。
 
+仓库已加入 .python-version，指定3.12系列。RapidOCR 1.4.4的官方Python要求为>=3.6且<3.13，不能使用Render默认的3.14。若Render环境变量已有PYTHON_VERSION，它会覆盖此文件，请删除该变量以使用仓库配置。修复后从Manual Deploy选择Clear build cache & deploy，确认构建日志使用Python 3.12。
+
 Environment 添加 SUPER_MIND_API_KEY、OPENAI_BASE_URL、OPENAI_MODEL，值分别为真实密钥、https://space.ai-builders.com/backend/v1、gpt-5。密钥不要写入此文件或提交 .env。可选检索密钥按 .env.example 设置。
 
 当前尚需解决：
