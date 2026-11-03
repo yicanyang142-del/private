@@ -117,7 +117,7 @@ def health():return {'status':'ok','mode':'cloud','configured':configured(),'mis
 
 
 @app.get('/auth/config')
-def auth_config():return {'cloud':True,'configured':configured(),'missing_variables':missing_config()}
+def auth_config():return {'cloud':True,'configured':configured(),'missing_variables':missing_config(),'ai_configured':bool(os.getenv('SUPER_MIND_API_KEY','').strip())}
 
 
 class Credentials(BaseModel):
@@ -130,7 +130,13 @@ async def login(payload:Credentials):
     if not configured():raise HTTPException(503,'尚未配置 Supabase')
     r=await auth_call('token?grant_type=password','POST',data=payload.model_dump())
     if not r.is_success:raise HTTPException(400,'邮箱或密码不正确，或邮箱尚未验证。请检查后重试。')
-    session=r.json();response=JSONResponse({'signed_in':True})
+    session=r.json()
+    if not session.get('access_token') or not session.get('refresh_token'):
+        raise HTTPException(401,'登录未获得有效凭证，请重试')
+    verified=await auth_call('user',token=session['access_token'])
+    if not verified.is_success or not verified.json().get('email_confirmed_at'):
+        raise HTTPException(401,'请先验证邮箱，再使用邮箱与密码登录')
+    response=JSONResponse({'signed_in':True})
     set_session(response,session)
     return response
 
@@ -138,7 +144,8 @@ async def login(payload:Credentials):
 @app.post('/auth/register')
 async def register(payload:Credentials):
     if not configured():raise HTTPException(503,'尚未配置 Supabase')
-    r=await auth_call('signup','POST',data=payload.model_dump())
+    site=os.getenv('APP_URL','https://'+os.getenv('RENDER_EXTERNAL_HOSTNAME','')).rstrip('/')
+    r=await auth_call('signup?redirect_to='+site,'POST',data=payload.model_dump())
     if not r.is_success:raise HTTPException(400,'注册未完成：请检查邮箱、密码要求、邮件服务配置，或稍后再试。')
     session=r.json();response=JSONResponse({'message':'如果邮箱可注册，我们已发送验证邮件。请验证后返回登录。'})
     if session.get('access_token') and session.get('refresh_token'):
@@ -162,6 +169,15 @@ def me(request:Request):return {'email':request.state.reader_user.get('email'),'
 
 class RecoveryEmail(BaseModel):
     email:str=Field(min_length=3,max_length=254)
+
+
+@app.post('/auth/resend')
+async def resend(payload:RecoveryEmail):
+    if not configured():raise HTTPException(503,'尚未配置 Supabase')
+    site=os.getenv('APP_URL','https://'+os.getenv('RENDER_EXTERNAL_HOSTNAME','')).rstrip('/')
+    r=await auth_call('resend?redirect_to='+site,'POST',data={'type':'signup','email':payload.email})
+    if not r.is_success:raise HTTPException(400,'验证邮件暂未能发送，请稍后再试；维护者需检查 SMTP 配置及邮件额度')
+    return {'message':'如果账号需要验证，已重新发送邮件；请只使用最新的一封。'}
 
 
 @app.post('/auth/recover')

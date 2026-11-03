@@ -81,7 +81,7 @@ class CloudPrivateTests(unittest.TestCase):
 
     def test_login_keeps_tokens_in_secure_httponly_cookies(self):
         from unittest.mock import AsyncMock
-        result=httpx.Response(200,json={'access_token':'a-token','refresh_token':'refresh-example-token'})
+        result=httpx.Response(200,json={'access_token':'a-token','refresh_token':'refresh-example-token','email_confirmed_at':'2026-11-03T00:00:00Z'})
         with TestClient(cloud.app,base_url='https://testserver') as c,patch.object(cloud,'auth_call',AsyncMock(return_value=result)):
             r=c.post('/auth/login',json={'email':'reader@example.com','password':'example-password'})
             self.assertEqual(r.status_code,200)
@@ -90,6 +90,13 @@ class CloudPrivateTests(unittest.TestCase):
             self.assertIn('Secure',r.headers['set-cookie'])
             r=c.post('/auth/logout')
             self.assertEqual(r.status_code,200)
+            self.assertFalse(c.cookies.get('reader_access'))
+
+    def test_rejected_login_never_sets_session_cookie(self):
+        from unittest.mock import AsyncMock
+        with TestClient(cloud.app,base_url='https://testserver') as c,patch.object(cloud,'auth_call',AsyncMock(return_value=httpx.Response(400,json={'error':'invalid'}))):
+            r=c.post('/auth/login',json={'email':'wrong@example.invalid','password':'wrong-password'})
+            self.assertEqual(r.status_code,400)
             self.assertFalse(c.cookies.get('reader_access'))
 
 
